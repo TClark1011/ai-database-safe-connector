@@ -1,21 +1,30 @@
 {
   "name": "ai-database-safety-experiment",
   "private": true,
-  "type": "module",
   "license": "MIT",
-  "packageManager": "pnpm@12.16.1",
-  "engines": {
-    "node": ">=24"
-  },
+  "type": "module",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck",
+    "fix": "pnpm run fix:lint; pnpm run fix:format",
+    "fix:lint": "oxlint --fix",
+    "fix:format": "oxfmt",
+    "check": "pnpm run --no-bail \"/^check:/\"",
+    "check:lint": "oxlint",
+    "check:format": "oxfmt --check"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
+    "oxfmt": "^0.76.0",
+    "oxlint": "^1.91.0",
+    "oxlint-tsgolint": "^7.0.2005",
     "tsdown": "^0.23.5",
     "turbo": "^2.11.10",
     "typescript": "^7.0.2"
-  }
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@12.16.1"
 }
