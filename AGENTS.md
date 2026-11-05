@@ -2,6 +2,8 @@
 
 Lets an AI agent read from a developer's database without seeing credentials, writing data, or reading columns the developer hasn't approved. The agent sends SQL to an MCP server and gets CSV back; the database enforces access through a Safe Schema of views and a SELECT-only Agent User generated from the Project Config. Used by developers on their own projects, starting with MySQL and Claude Code. Early development: the monorepo foundation is in place, no features yet.
 
+Run the `verify-code` skill before considering any code change complete.
+
 Domain terms are defined in `GLOSSARY.md`; design decisions are in `docs/adr/`. Security is the core requirement: read the ADRs before changing how access is enforced.
 
 ## Tech stack
