@@ -1,0 +1,16 @@
+{
+  "name": "@ai-database-safety-experiment/flow-tests",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@ai-database-safety-experiment/testing": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "vitest": "^5.1.0"
+  }
+}

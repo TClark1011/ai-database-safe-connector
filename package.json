@@ -6,7 +6,11 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "typecheck": "turbo run typecheck",
+    "typecheck": "turbo run typecheck && tsc",
+    "test": "turbo run build && vitest run",
+    "test:process": "vitest run --project process",
+    "test:infra": "turbo run build && vitest run --project infra",
+    "test:flow": "turbo run build && vitest run --project flow",
     "fix": "pnpm run fix:lint; pnpm run fix:format",
     "fix:lint": "oxlint --fix",
     "fix:format": "oxfmt",
@@ -17,12 +21,14 @@
   "devDependencies": {
     "@types/node": "^24.19.2",
     "lefthook": "^2.2.2",
+    "memfs": "^4.80.0",
     "oxfmt": "^0.76.0",
     "oxlint": "^1.91.0",
     "oxlint-tsgolint": "^7.0.2005",
     "tsdown": "^0.23.5",
     "turbo": "^2.11.10",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
   },
   "engines": {
     "node": ">=24"

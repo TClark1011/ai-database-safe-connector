@@ -1,6 +1,6 @@
 ---
 name: verify-code
-description: Verifies a code change with the project's fix, check, typecheck and build commands. Run it as the final step of any coding work; the work is incomplete until it passes.
+description: Verifies a code change with the project's fix, check, typecheck, build and test commands. Run it as the final step of any coding work; the work is incomplete until it passes.
 ---
 
 # Verify code
@@ -11,8 +11,11 @@ Run these from the repository root, in order. Fix each failure before moving to 
 2. `pnpm check`: reports the lint and format problems `fix` couldn't resolve.
 3. `pnpm typecheck`
 4. `pnpm build`
+5. `pnpm test`: every test, including those against a real MySQL in Docker. If Docker isn't running, ask the user to start it.
 
-Verification passes when all four commands pass, in one uninterrupted run, on the final state of the change.
+Verification passes when all five commands pass, in one uninterrupted run, on the final state of the change.
+
+When `typescript/prefer-readonly-parameter-types` fires on a parameter typed with a library's type, add that type to the rule's `allow` list in `.oxlintrc.json` (`{ "from": "package", "package": "<package name, not import path>", "name": [...] }`). The rule stays strict for the project's own types.
 
 ## Conflicting fixes
 

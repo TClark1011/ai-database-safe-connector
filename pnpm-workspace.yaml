@@ -1,5 +1,9 @@
 packages:
   - packages/*
   - plugins/*
+  - tests/*
 allowBuilds:
+  cpu-features: false
   lefthook: true
+  protobufjs: false
+  ssh2: false

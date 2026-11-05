@@ -12,6 +12,11 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@ai-database-safety-experiment/core": "workspace:*"
+    "@ai-database-safety-experiment/core": "workspace:*",
+    "mysql2": "^3.24.6"
+  },
+  "devDependencies": {
+    "@ai-database-safety-experiment/testing": "workspace:*",
+    "vitest": "^5.1.0"
   }
 }

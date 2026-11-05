@@ -1,0 +1,20 @@
+{
+  "name": "@ai-database-safety-experiment/testing",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./global-setup": "./src/global-setup.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@testcontainers/mysql": "^12.2.1",
+    "mysql2": "^3.24.6",
+    "vitest": "^5.1.0"
+  }
+}

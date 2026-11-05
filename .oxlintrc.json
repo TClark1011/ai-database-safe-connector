@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["typescript", "unicorn", "oxc", "import", "node", "promise"],
+  "plugins": ["typescript", "unicorn", "oxc", "import", "node", "promise", "vitest"],
   "categories": {
     "correctness": "error",
     "suspicious": "error",
@@ -21,6 +21,16 @@
     "typescript/no-unsafe-return": "error",
     "typescript/switch-exhaustiveness-check": "error",
     "typescript/no-explicit-any": "error",
+    "typescript/prefer-readonly-parameter-types": [
+      "error",
+      {
+        "treatMethodsAsReadonly": true,
+        "allow": [
+          { "from": "package", "package": "vitest", "name": ["TestProject"] },
+          { "from": "package", "package": "mysql2", "name": ["Connection"] }
+        ]
+      }
+    ],
     "no-new-func": "error",
     "no-implied-eval": "error",
     "typescript/no-implied-eval": "error",
