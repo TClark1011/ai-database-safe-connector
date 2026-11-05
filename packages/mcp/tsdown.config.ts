@@ -6,6 +6,6 @@ export default defineConfig({
   platform: "node",
   dts: false,
   deps: {
-    alwaysBundle: [/.*/],
+    alwaysBundle: [/.*/u],
   },
 });

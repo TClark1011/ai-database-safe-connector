@@ -22,13 +22,13 @@ Run a single package with a filter, e.g. `pnpm --filter @ai-database-safety-expe
 
 ## Packages
 
-| Path | What it is |
-| --- | --- |
-| `packages/core` | Harness-agnostic shared logic |
-| `packages/adapter-mysql` | MySQL Database Adapter |
-| `packages/mcp` | The MCP server, built to `dist/mcp.mjs` |
-| `packages/setup` | Interactive credential setup, built to `dist/setup.mjs` |
-| `plugins/claude-code` | The Claude Code plugin and its hooks |
+| Path                     | What it is                                              |
+| ------------------------ | ------------------------------------------------------- |
+| `packages/core`          | Harness-agnostic shared logic                           |
+| `packages/adapter-mysql` | MySQL Database Adapter                                  |
+| `packages/mcp`           | The MCP server, built to `dist/mcp.mjs`                 |
+| `packages/setup`         | Interactive credential setup, built to `dist/setup.mjs` |
+| `plugins/claude-code`    | The Claude Code plugin and its hooks                    |
 
 ## Install (Claude Code)
 

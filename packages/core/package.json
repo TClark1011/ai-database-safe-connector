@@ -2,11 +2,11 @@
   "name": "@ai-database-safety-experiment/core",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
   "imports": {
     "#/*": "./src/*.ts"
+  },
+  "exports": {
+    ".": "./src/index.ts"
   },
   "scripts": {
     "typecheck": "tsc"
