@@ -1,0 +1,21 @@
+{
+  "name": "ai-database-safety-experiment",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "packageManager": "pnpm@12.16.1",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "typecheck": "turbo run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "tsdown": "^0.23.5",
+    "turbo": "^2.11.10",
+    "typescript": "^7.0.2"
+  }
+}

@@ -1,0 +1,1 @@
+export { productName } from "#/product";

@@ -1,0 +1,16 @@
+{
+  "name": "@ai-database-safety-experiment/claude-code-plugin",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*.ts"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@ai-database-safety-experiment/core": "workspace:*"
+  }
+}

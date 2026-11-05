@@ -1,0 +1,14 @@
+{
+  "name": "ai-database-safety-experiment",
+  "description": "Plugins for letting AI agents safely read from databases.",
+  "owner": {
+    "name": "Thomas Clark"
+  },
+  "plugins": [
+    {
+      "name": "ai-database-safety-experiment",
+      "source": "./plugins/claude-code",
+      "description": "Read-only database access for Claude with a column allowlist and no credential exposure."
+    }
+  ]
+}

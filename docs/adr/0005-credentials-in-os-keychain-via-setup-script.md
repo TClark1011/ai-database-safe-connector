@@ -1,0 +1,10 @@
+# Credentials in the OS keychain, entered through a setup script
+
+Admin Credentials, Agent User passwords and hash secrets are stored in the OS keychain (macOS Keychain, Windows Credential Manager, Linux Secret Service) and never written to the project. The human enters them through an interactive setup script, shipped in the GitHub Release and run in their own terminal, never through the agent.
+
+## Considered Options
+
+- **Environment variables in Harness config** (rejected): the agent can often read those files.
+- **Encrypted file** (rejected): the passphrase still has to come from somewhere at startup.
+- **Separate bash and PowerShell scripts piped from curl** (rejected): two scripts to maintain, and neither can read a password back from Windows Credential Manager without native code.
+- **`npx` CLI** (rejected for now): requires publishing to npm (see ADR 0008).

@@ -1,0 +1,19 @@
+{
+  "name": "@ai-database-safety-experiment/mcp",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*.ts"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "node --watch src/index.ts",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@ai-database-safety-experiment/adapter-mysql": "workspace:*",
+    "@ai-database-safety-experiment/core": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
+  }
+}

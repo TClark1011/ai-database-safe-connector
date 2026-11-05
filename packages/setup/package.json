@@ -1,0 +1,16 @@
+{
+  "name": "@ai-database-safety-experiment/setup",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*.ts"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "node --watch src/index.ts",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@ai-database-safety-experiment/core": "workspace:*"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "database": {
+      "command": "node",
+      "args": ["${user_config.install_dir}/mcp.mjs"]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@ai-database-safety-experiment/adapter-mysql",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "imports": {
+    "#/*": "./src/*.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@ai-database-safety-experiment/core": "workspace:*"
+  }
+}

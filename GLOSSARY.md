@@ -1,0 +1,57 @@
+# AI Database Safe Connector
+
+Lets an AI agent read from a database without exposing credentials, writable access, or columns the developer has not approved.
+
+## Access control
+
+**Column Allowlist**:
+The developer-defined list of columns the agent may read, either in full or as Obfuscated Columns. Every column not on it is hidden.
+_Avoid_: Whitelist, column permissions
+
+**Obfuscated Column**:
+An allowlisted column the agent sees only as a keyed hash of each value, with NULLs left visible, so it can match values without reading them.
+_Avoid_: Hashed column, masked column
+
+**Project Config**:
+The file in a project that holds its Column Allowlist and Environments, never credentials or secrets. The agent may read it but not edit it.
+_Avoid_: Settings file, allowlist file
+
+**Environment**:
+A human-readable label in the Project Config, such as "prod" or "dev", mapped to the connection settings of one database. The agent picks one per query.
+_Avoid_: Stage, target, database alias
+
+**Widening Change**:
+A change to the Project Config that exposes more data to the agent than the last applied version. It needs human approval before it takes effect.
+_Avoid_: Permission escalation
+
+## Database
+
+**Agent User**:
+The SELECT-only database account the agent's queries run as, with access to the Safe Schema only.
+_Avoid_: Read-only user, AI user
+
+**Admin Credentials**:
+The developer's privileged database credentials, used only to run Sync and never on the query path.
+_Avoid_: Root credentials, master credentials
+
+**Safe Schema**:
+The database schema of views, generated from the Column Allowlist, that is all the Agent User can see.
+_Avoid_: View schema, shadow schema
+
+**Sync**:
+Rebuilding the Safe Schema and the Agent User's grants so they match the Project Config.
+_Avoid_: Provisioning, migration
+
+**Database Adapter**:
+The engine-specific implementation of Sync and query execution, such as MySQL.
+_Avoid_: Driver, connector
+
+## Harnesses
+
+**Harness**:
+An AI agent application that hosts the agent and its tools, such as Claude Code.
+_Avoid_: Client, host app
+
+**Harness Plugin**:
+A package that bundles the harness-agnostic components and configures them for one Harness.
+_Avoid_: Integration, extension
