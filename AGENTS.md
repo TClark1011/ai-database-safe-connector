@@ -1,12 +1,6 @@
 # ai-database-safety-experiment
 
-Lets an AI agent read from a developer's database without seeing credentials, writing data, or reading columns the developer hasn't approved. The agent sends SQL to an MCP server and gets CSV back; the database enforces access through a Safe Schema of views and a SELECT-only Agent User generated from the Project Config. Used by developers on their own projects, starting with MySQL and Claude Code. Early development: the monorepo foundation is in place, no features yet.
-
-Run the `verify-code` skill before considering any code change complete.
-
-Commit messages follow Conventional Commits, scoped to a workspace package name without its `@ai-database-safety-experiment/` prefix, or unscoped. When the `commit-msg` hook rejects a message, rewrite the message; never bypass the hook.
-
-Domain terms are defined in `GLOSSARY.md`; design decisions are in `docs/adr/`. Security is the core requirement: read the ADRs before changing how access is enforced.
+Lets an AI agent read from a developer's database without seeing credentials, writing data, or reading columns the developer hasn't approved. The agent sends SQL to an MCP server and gets CSV back; the database enforces access through a Safe Schema of views and a SELECT-only Agent User generated from the Project Config. Used by developers on their own projects, starting with MySQL and Claude Code. Early development: the monorepo foundation, tooling, CI and releases are in place, no features yet.
 
 ## Tech stack
 
@@ -40,8 +34,28 @@ When you add, remove or replace a technology, or build a planned one, update thi
 - `packages/adapter-mysql/`: MySQL Database Adapter: Sync (Safe Schema, Agent User, grants) and read-only query execution
 - `packages/mcp/`: the MCP server, bundled to `dist/mcp.mjs`
 - `packages/setup/`: interactive credential setup and the Widening Change approval fallback, bundled to `dist/setup.mjs`
+- `packages/testing/`: shared test setup: the MySQL container and per-test databases and users
 - `plugins/claude-code/`: the Claude Code plugin (`.claude-plugin/plugin.json`, `.mcp.json`) and its hooks, bundled to `dist/hooks.mjs`
+- `tests/flow/`: flow tests that drive the built bundles end to end
 - `.claude-plugin/marketplace.json`: the Claude Code plugin marketplace
 - `docs/adr/`: architecture decision records
 
-Workspace packages are private and consumed as TypeScript source. Import other packages only through `@ai-database-safety-experiment/<package>`, never through paths inside them. Inside a package, import from its own `src/` with the `#/*` alias (Node subpath imports, e.g. `#/product`).
+## Working on this project
+
+Security is the core requirement. Domain terms are defined in `GLOSSARY.md` and design decisions are in `docs/adr/`; read the ADRs before changing how access is enforced.
+
+Run `pnpm install`, `add`, `remove` and `update` from the repository root, as the whole command with no pipe or chaining, and with the subcommand first (e.g. `pnpm add zod --filter @ai-database-safety-experiment/core`): only that form runs outside the sandbox, which they need.
+
+Workspace packages are private and consumed as TypeScript source. Import other packages only through `@ai-database-safety-experiment/<package>`, never through paths inside them. Inside a package, import from its own `src/` through the `#/*` alias, which points at that package's `src/` (e.g. `#/product`).
+
+Branch from `main` as `<type>/<short-name>`, using a Conventional Commits type (e.g. `feat/query-tool`); `main` is the Dev Branch. Commit messages follow Conventional Commits, scoped to a workspace package name without its `@ai-database-safety-experiment/` prefix, or unscoped. When the `commit-msg` hook rejects a message, rewrite the message; never bypass the hook.
+
+## Skill router
+
+| When                                                   | Skills             |
+| ------------------------------------------------------ | ------------------ |
+| Writing or changing code                               | `verify-code`      |
+| Writing or changing tests                              | `vitest`           |
+| Working in `plugins/claude-code/` or `.claude-plugin/` | `plugin-structure` |
+
+When you add, remove or rename a skill, update this router in the same change.
