@@ -63,3 +63,7 @@ Branch from `main` as `<type>/<short-name>`, using a Conventional Commits type (
 | Stress-testing a plan or design                          | `grilling`                          |
 
 When you add, remove or rename a skill, update this router in the same change.
+
+## Issue tracker
+
+Issues live in GitHub Issues on `TClark1011/ai-database-safe-connector`, managed with the `gh` CLI. See `docs/agents/issue-tracker.md`.
