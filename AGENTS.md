@@ -27,8 +27,10 @@ Domain terms are defined in `GLOSSARY.md`; design decisions are in `docs/adr/`. 
 - _Skill library:_ harness-agnostic package bundled into Harness Plugins (planned)
 - _Other database engines:_ more Database Adapters, e.g. PostgreSQL (planned)
 - _Other harnesses:_ more Harness Plugins under `plugins/` (planned)
-- _Testing:_ against a real MySQL in Docker, e.g. Testcontainers (planned)
-- _Releases:_ automated GitHub Release builds (planned)
+- _Testing:_ Vitest, with Testcontainers running a real MySQL in Docker
+- _CI:_ GitHub Actions
+- _Commit messages:_ commitlint (Lefthook `commit-msg` hook), commitizen as `pnpm commit`
+- _Releases:_ semantic-release on every push to `main` that touches shipped code, versioned from Conventional Commits; the Claude Code plugin has no `version`, so it tracks commits
 
 When you add, remove or replace a technology, or build a planned one, update this list in the same change.
 

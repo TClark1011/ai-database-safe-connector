@@ -1,7 +1,6 @@
 {
   "name": "ai-database-safety-experiment",
   "description": "Lets Claude read from your database through an MCP server, with read-only access, a column allowlist and no access to credentials.",
-  "version": "0.0.0",
   "license": "MIT",
   "userConfig": {
     "install_dir": {
