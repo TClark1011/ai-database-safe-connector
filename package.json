@@ -1,21 +1,52 @@
 {
   "name": "ai-database-safety-experiment",
   "private": true,
-  "type": "module",
   "license": "MIT",
-  "packageManager": "pnpm@12.16.1",
-  "engines": {
-    "node": ">=24"
-  },
+  "type": "module",
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
-    "typecheck": "turbo run typecheck"
+    "typecheck": "turbo run typecheck && tsc",
+    "test": "turbo run build && vitest run",
+    "test:process": "vitest run --project process",
+    "test:infra": "turbo run build && vitest run --project infra",
+    "test:flow": "turbo run build && vitest run --project flow",
+    "fix": "pnpm run fix:lint; pnpm run fix:format",
+    "fix:lint": "oxlint --fix",
+    "fix:format": "oxfmt",
+    "check": "pnpm run --no-bail \"/^check:/\"",
+    "check:lint": "oxlint",
+    "check:format": "oxfmt --check",
+    "commit": "git-cz"
   },
   "devDependencies": {
+    "@commitlint/cli": "^21.2.4",
+    "@commitlint/config-conventional": "^21.2.4",
+    "@commitlint/config-pnpm-scopes": "^21.2.2",
+    "@commitlint/cz-commitlint": "^21.2.4",
+    "@commitlint/types": "^21.2.3",
     "@types/node": "^24.19.2",
+    "commitizen": "^4.3.2",
+    "conventional-changelog-conventionalcommits": "^10.4.1",
+    "inquirer": "^12.11.1",
+    "lefthook": "^2.2.2",
+    "memfs": "^4.80.0",
+    "oxfmt": "^0.76.0",
+    "oxlint": "^1.91.0",
+    "oxlint-tsgolint": "^7.0.2005",
+    "semantic-release": "^25.0.9",
     "tsdown": "^0.23.5",
     "turbo": "^2.11.10",
-    "typescript": "^7.0.2"
-  }
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "@commitlint/cz-commitlint"
+    }
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "packageManager": "pnpm@12.16.1"
 }

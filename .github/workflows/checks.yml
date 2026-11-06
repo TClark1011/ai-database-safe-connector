@@ -1,0 +1,42 @@
+name: Checks
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      # Let every check finish, so one failure never hides another.
+      fail-fast: false
+      matrix:
+        include:
+          - name: Tidy
+            script: check
+          - name: Typecheck
+            script: typecheck
+          - name: Build
+            script: build
+          - name: Test (process)
+            script: test:process
+          # Testcontainers starts MySQL in the runner's Docker.
+          - name: Test (infra)
+            script: test:infra
+          - name: Test (flow)
+            script: test:flow
+    steps:
+      - uses: actions/checkout@v7
+      # Installs pnpm from packageManager and Node.js from .nvmrc, then runs pnpm install.
+      - uses: pnpm/setup@v3
+        with:
+          cache: true
+          require-lockfile: true
+      - run: pnpm run ${{ matrix.script }}

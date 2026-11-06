@@ -13,7 +13,11 @@
   "dependencies": {
     "@ai-database-safety-experiment/adapter-mysql": "workspace:*",
     "@ai-database-safety-experiment/core": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@modelcontextprotocol/server": "^2.4.0",
     "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@ai-database-safety-experiment/testing": "workspace:*",
+    "vitest": "^5.1.0"
   }
 }

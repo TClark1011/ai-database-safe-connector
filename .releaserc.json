@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/semantic-release.json",
+  "branches": ["main"],
+  "plugins": [
+    ["@semantic-release/commit-analyzer", { "preset": "conventionalcommits" }],
+    ["@semantic-release/release-notes-generator", { "preset": "conventionalcommits" }],
+    [
+      "@semantic-release/github",
+      {
+        "assets": [
+          { "path": "release/ai-database-safety-experiment-linux-x64.zip" },
+          { "path": "release/ai-database-safety-experiment-darwin-arm64.zip" },
+          { "path": "release/ai-database-safety-experiment-win32-x64.zip" }
+        ],
+        "successComment": false,
+        "releasedLabels": false
+      }
+    ]
+  ]
+}

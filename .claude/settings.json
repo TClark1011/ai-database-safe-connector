@@ -1,0 +1,23 @@
+{
+  "env": {
+    "TURBO_TELEMETRY_DISABLED": "1"
+  },
+  "sandbox": {
+    "excludedCommands": [
+      "pnpm install",
+      "pnpm install *",
+      "pnpm add *",
+      "pnpm remove *",
+      "pnpm update *"
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install)",
+      "Bash(pnpm install *)",
+      "Bash(pnpm add *)",
+      "Bash(pnpm remove *)",
+      "Bash(pnpm update *)"
+    ]
+  }
+}

@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "packages/**"
+      - "plugins/**"
+      - "pnpm-lock.yaml"
+      - "!**/*.test.ts"
+      - "!packages/testing/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  bundle:
+    name: Bundle (${{ matrix.target }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            target: linux-x64
+          - runner: macos-latest
+            target: darwin-arm64
+          - runner: windows-latest
+            target: win32-x64
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/setup@v3
+        with:
+          cache: true
+          require-lockfile: true
+      - run: pnpm build
+      # The zip names must match the assets in .releaserc.json.
+      - name: Zip bundles
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          Compress-Archive -DestinationPath release/ai-database-safety-experiment-${{ matrix.target }}.zip -Path `
+            packages/mcp/dist/mcp.mjs, `
+            packages/setup/dist/setup.mjs, `
+            plugins/claude-code/dist/hooks.mjs
+      - uses: actions/upload-artifact@v7
+        with:
+          name: bundle-${{ matrix.target }}
+          path: release/ai-database-safety-experiment-${{ matrix.target }}.zip
+          if-no-files-found: error
+
+  release:
+    needs: bundle
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # semantic-release reads every commit and tag since the last release.
+          fetch-depth: 0
+      - uses: pnpm/setup@v3
+        with:
+          cache: true
+          require-lockfile: true
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: bundle-*
+          path: release
+          merge-multiple: true
+      - run: pnpm exec semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

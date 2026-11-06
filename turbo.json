@@ -1,6 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
-  "globalPassThroughEnv": ["npm_config_manage_package_manager_versions"],
+  "globalPassThroughEnv": ["XDG_RUNTIME_DIR"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

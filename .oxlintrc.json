@@ -1,0 +1,60 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "import", "node", "promise", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "error",
+    "pedantic": "error"
+  },
+  "options": {
+    "typeAware": true
+  },
+  "rules": {
+    "typescript/await-thenable": "error",
+    "typescript/no-floating-promises": "error",
+    "typescript/no-misused-promises": "error",
+    "typescript/no-unsafe-argument": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-return": "error",
+    "typescript/switch-exhaustiveness-check": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/prefer-readonly-parameter-types": [
+      "error",
+      {
+        "treatMethodsAsReadonly": true,
+        "allow": [
+          { "from": "package", "package": "vitest", "name": ["TestProject"] },
+          { "from": "package", "package": "mysql2", "name": ["Connection"] }
+        ]
+      }
+    ],
+    "no-new-func": "error",
+    "no-implied-eval": "error",
+    "typescript/no-implied-eval": "error",
+    "import/no-cycle": "error",
+    "import/no-relative-parent-imports": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "regex": "^@ai-database-safety-experiment/[^/]+/",
+            "message": "Import other packages through their entry point only, e.g. @ai-database-safety-experiment/core."
+          }
+        ]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["packages/mcp/**"],
+      "rules": {
+        "no-console": ["error", { "allow": ["error", "warn"] }]
+      }
+    }
+  ],
+  "ignorePatterns": ["**/dist/**"]
+}
