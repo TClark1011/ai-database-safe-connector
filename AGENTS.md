@@ -15,7 +15,7 @@ Domain terms are defined in `GLOSSARY.md`; design decisions are in `docs/adr/`. 
 - _Package manager:_ pnpm 12 workspaces
 - _Monorepo tasks:_ Turborepo
 - _Bundler:_ tsdown, bundling each runnable entry and its dependencies into one `.mjs` file
-- _MCP:_ `@modelcontextprotocol/sdk`, stdio transport
+- _MCP:_ MCP TypeScript SDK v2 (`@modelcontextprotocol/server`, `@modelcontextprotocol/client` in tests), stdio via `serveStdio`
 - _Validation:_ zod 4, also generating the Project Config's JSON Schema (planned)
 - _MySQL driver:_ `mysql2` (planned)
 - _Keychain:_ `@napi-rs/keyring` (planned)

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@ai-database-safety-experiment/testing": "workspace:*",
-    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@modelcontextprotocol/client": "^2.4.0",
     "vitest": "^5.1.0"
   }
 }
