@@ -4,6 +4,8 @@ Lets an AI agent read from a developer's database without seeing credentials, wr
 
 Run the `verify-code` skill before considering any code change complete.
 
+Commit messages follow Conventional Commits, scoped to a workspace package name without its `@ai-database-safety-experiment/` prefix, or unscoped. When the `commit-msg` hook rejects a message, rewrite the message; never bypass the hook.
+
 Domain terms are defined in `GLOSSARY.md`; design decisions are in `docs/adr/`. Security is the core requirement: read the ADRs before changing how access is enforced.
 
 ## Tech stack
