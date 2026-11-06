@@ -52,10 +52,14 @@ Branch from `main` as `<type>/<short-name>`, using a Conventional Commits type (
 
 ## Skill router
 
-| When                                                   | Skills             |
-| ------------------------------------------------------ | ------------------ |
-| Writing or changing code                               | `verify-code`      |
-| Writing or changing tests                              | `vitest`           |
-| Working in `plugins/claude-code/` or `.claude-plugin/` | `plugin-structure` |
+| When                                                     | Skills                              |
+| -------------------------------------------------------- | ----------------------------------- |
+| Writing or changing code                                 | `verify-code`                       |
+| Building a feature or fixing a bug                       | `test-driven-development`           |
+| Writing or changing tests                                | `vitest`, `test-driven-development` |
+| Working in `plugins/claude-code/` or `.claude-plugin/`   | `plugin-structure`                  |
+| Reviewing a branch, PR or work-in-progress changes       | `code-review`                       |
+| Discussing domain terms, editing `GLOSSARY.md` or an ADR | `domain-modeling`                   |
+| Stress-testing a plan or design                          | `grilling`                          |
 
 When you add, remove or rename a skill, update this router in the same change.
