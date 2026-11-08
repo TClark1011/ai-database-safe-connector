@@ -5,7 +5,7 @@ Lets an AI agent read from a database without exposing credentials, writable acc
 ## Access control
 
 **Column Allowlist**:
-The developer-defined list of columns the agent may read, as Full Columns or Obfuscated Columns. Every column not on it is hidden. One Column Allowlist applies to every Environment.
+The developer-defined list of columns the agent may read, as Full Columns or Obfuscated Columns. Every column not on it is hidden. One Column Allowlist applies to every restricted Environment.
 _Avoid_: Whitelist, column permissions
 
 **Global Column Allowlist**:
@@ -28,6 +28,10 @@ _Avoid_: Settings file, allowlist file
 A human-readable label in the Project Config, such as "prod" or "dev", mapped to the connection settings of one database. The agent picks one per query.
 _Avoid_: Stage, target, database alias
 
+**Unrestricted Environment**:
+An Environment where the agent may read every column of every table in its database, with no Column Allowlist or Safe Schema. Meant for databases with no real personal data, such as dev or staging.
+_Avoid_: Open environment, trusted environment
+
 **Widening Change**:
 A change to the Project Config that exposes more data to the agent than the last applied version. It needs human approval before it takes effect.
 _Avoid_: Permission escalation
@@ -35,7 +39,7 @@ _Avoid_: Permission escalation
 ## Database
 
 **Agent User**:
-The SELECT-only database account the agent's queries run as, with access to the Safe Schema only.
+The SELECT-only database account the agent's queries run as, with access to one Environment's Safe Schema, or its whole database in an Unrestricted Environment.
 _Avoid_: Read-only user, AI user
 
 **Admin Credentials**:
@@ -43,7 +47,7 @@ The developer's privileged database credentials, used only to run Sync and never
 _Avoid_: Root credentials, master credentials
 
 **Safe Schema**:
-The database schema of views, generated from the Column Allowlist, that is all the Agent User can see.
+The database schema of views, generated from the Column Allowlist, that is all the Agent User can see in a restricted Environment.
 _Avoid_: View schema, shadow schema
 
 **Sync**:
