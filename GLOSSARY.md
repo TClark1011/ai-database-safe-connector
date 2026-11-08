@@ -5,8 +5,16 @@ Lets an AI agent read from a database without exposing credentials, writable acc
 ## Access control
 
 **Column Allowlist**:
-The developer-defined list of columns the agent may read, either in full or as Obfuscated Columns. Every column not on it is hidden.
+The developer-defined list of columns the agent may read, as Full Columns or Obfuscated Columns. Every column not on it is hidden. One Column Allowlist applies to every Environment.
 _Avoid_: Whitelist, column permissions
+
+**Global Column Allowlist**:
+Base column rules applied to every table on the Column Allowlist, such as standard `id` and `created_at` columns. A table's own rules override them, including hiding a column. It never brings a table onto the Column Allowlist.
+_Avoid_: Default columns, common columns
+
+**Full Column**:
+An allowlisted column the agent sees with its real values.
+_Avoid_: Plain column, visible column
 
 **Obfuscated Column**:
 An allowlisted column the agent sees only as a keyed hash of each value, with NULLs left visible, so it can match values without reading them.
