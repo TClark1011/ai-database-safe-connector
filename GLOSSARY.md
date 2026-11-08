@@ -39,7 +39,7 @@ _Avoid_: Permission escalation
 ## Database
 
 **Agent User**:
-The SELECT-only database account the agent's queries run as, with access to one Environment's Safe Schema, or its whole database in an Unrestricted Environment.
+The SELECT-only database account the agent's queries run as, one per developer and Environment, with access to its Safe Schema, or its whole database in an Unrestricted Environment.
 _Avoid_: Read-only user, AI user
 
 **Admin Credentials**:
@@ -47,7 +47,7 @@ The developer's privileged database credentials, used only to run Sync and never
 _Avoid_: Root credentials, master credentials
 
 **Safe Schema**:
-The database schema of views, generated from the Column Allowlist, that is all the Agent User can see in a restricted Environment.
+The database schema of views, generated from the Column Allowlist, that is all the Agent User can see in a restricted Environment. Each Agent User has its own.
 _Avoid_: View schema, shadow schema
 
 **Sync**:
