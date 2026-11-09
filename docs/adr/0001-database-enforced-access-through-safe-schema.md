@@ -11,5 +11,5 @@ The agent's SQL runs as an Agent User that has SELECT on the Safe Schema only: a
 
 - Sync needs Admin Credentials with `CREATE USER`, `CREATE`, `CREATE VIEW` and `GRANT OPTION`. A plain read/write application user isn't enough.
 - The views' `DEFINER` account must keep its privileges, or the views stop working.
-- The Agent User must never be granted `EXECUTE`, `FILE` or `SHOW VIEW`: `DEFINER` stored functions could write data, and view definitions contain the hash secret.
+- The Agent User must never be granted `EXECUTE`, `FILE` or `SHOW VIEW`: `DEFINER` stored functions could write data, and view definitions show how values are hashed and where the hash secret lives (ADR 0003).
 - Unrestricted Environments have no Safe Schema; the Agent User gets a direct grant on the database instead (ADR 0009).
