@@ -10,6 +10,6 @@ The agent's SQL runs as an Agent User that has SELECT on the Safe Schema only: a
 ## Consequences
 
 - Sync needs Admin Credentials with `CREATE USER`, `CREATE`, `CREATE VIEW` and `GRANT OPTION`. A plain read/write application user isn't enough.
-- The views' `DEFINER` account must keep its privileges, or the views stop working.
+- The views' `DEFINER` account must keep its privileges, or the views stop working. Sync never writes an explicit `DEFINER`, so views always belong to the admin account running Sync: managed providers don't grant `SUPER`, and Azure has no `SET_USER_ID`, so a separate definer account isn't portable. When Sync reads applied state, a view whose `DEFINER` isn't `CURRENT_USER()` (for example after the developer changed Admin Credentials) is drift, and Sync recreates it without approval since exposure is unchanged. Queries failing because a definer lost privileges or no longer exists trigger a Sync and one retry (ADR 0012).
 - The Agent User must never be granted `EXECUTE`, `FILE` or `SHOW VIEW`: `DEFINER` stored functions could write data, and view definitions show how values are hashed and where the hash secret lives (ADR 0003).
 - Unrestricted Environments have no Safe Schema; the Agent User gets a direct grant on the database instead (ADR 0009).
