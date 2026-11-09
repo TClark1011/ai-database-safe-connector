@@ -33,7 +33,7 @@ An Environment where the agent may read every column of every table in its datab
 _Avoid_: Open environment, trusted environment
 
 **Widening Change**:
-A change to the Project Config that exposes more data to the agent than the last applied version. It needs human approval before it takes effect.
+A difference between what the Project Config allows in an Environment's database and what is currently applied there, where the Project Config would expose more data to the agent. It can come from editing the Project Config or from the database gaining an allowlisted column. It needs human approval before it takes effect.
 _Avoid_: Permission escalation
 
 ## Database
