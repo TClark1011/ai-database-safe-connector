@@ -1,6 +1,6 @@
 # AI Database Safe Connector
 
-Lets an AI agent read from a database without exposing credentials, writable access, or columns the developer has not approved.
+Lets an AI agent working in a project's codebase read from that project's database without exposing credentials, writable access, or columns the developer has not approved.
 
 ## Access control
 

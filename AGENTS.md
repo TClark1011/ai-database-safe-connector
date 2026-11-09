@@ -1,6 +1,6 @@
 # ai-database-safety-experiment
 
-Lets an AI agent read from a developer's database without seeing credentials, writing data, or reading columns the developer hasn't approved. The agent sends SQL to an MCP server and gets CSV back; the database enforces access through a Safe Schema of views and a SELECT-only Agent User generated from the Project Config. Used by developers on their own projects, starting with MySQL and Claude Code. Early development: the monorepo foundation, tooling, CI and releases are in place, no features yet.
+Lets an AI agent working in a project's codebase read from that project's database without seeing credentials, writing data, or reading columns the developer hasn't approved; it learns the schema from the code, not the tool. The agent sends SQL to an MCP server and gets CSV back; the database enforces access through a Safe Schema of views and a SELECT-only Agent User generated from the Project Config. Used by developers on their own projects, starting with MySQL and Claude Code. Early development: the monorepo foundation, tooling, CI and releases are in place, no features yet.
 
 ## Tech stack
 
