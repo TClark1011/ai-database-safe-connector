@@ -1,1 +1,1 @@
-export const adapterId = "mysql";
+export { mysqlAdapter } from "#/adapter";
