@@ -27,7 +27,17 @@
         "treatMethodsAsReadonly": true,
         "allow": [
           { "from": "package", "package": "vitest", "name": ["TestProject"] },
-          { "from": "package", "package": "mysql2", "name": ["Connection"] }
+          {
+            "from": "package",
+            "package": "mysql2",
+            "name": ["Connection", "Field", "FieldPacket", "RowDataPacket"]
+          },
+          {
+            "from": "package",
+            "package": "@modelcontextprotocol/server",
+            "name": ["McpServer", "ServerContext"]
+          },
+          { "from": "package", "package": "zod", "name": ["ZodType", "$RefinementCtx"] }
         ]
       }
     ],

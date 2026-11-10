@@ -1,9 +1,7 @@
-import { McpServer } from "@modelcontextprotocol/server";
-import { serveStdio } from "@modelcontextprotocol/server/stdio";
-import { adapterId } from "@ai-database-safety-experiment/adapter-mysql";
-import { productName } from "@ai-database-safety-experiment/core";
+import { createKeyringCredentialStore, productName } from "@ai-database-safety-experiment/core";
+import { startMcpServer } from "#/server";
 
-serveStdio(() => new McpServer({ name: productName, version: "0.0.0" }));
+startMcpServer({ argv: process.argv.slice(2), credentialStore: createKeyringCredentialStore() });
 
 // stdout carries the MCP protocol, so logs go to stderr.
-console.error(`${productName} MCP server running on stdio (adapter: ${adapterId})`);
+console.error(`${productName} MCP server running on stdio`);

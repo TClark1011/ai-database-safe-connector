@@ -5,6 +5,9 @@
   "imports": {
     "#/*": "./src/*.ts"
   },
+  "exports": {
+    ".": "./src/server.ts"
+  },
   "scripts": {
     "build": "tsdown",
     "dev": "node --watch src/index.ts",
@@ -14,6 +17,7 @@
     "@ai-database-safety-experiment/adapter-mysql": "workspace:*",
     "@ai-database-safety-experiment/core": "workspace:*",
     "@modelcontextprotocol/server": "^2.4.0",
+    "@napi-rs/keyring": "^2.1.2",
     "zod": "^4.6.7"
   },
   "devDependencies": {

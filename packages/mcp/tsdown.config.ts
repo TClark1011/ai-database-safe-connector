@@ -7,5 +7,7 @@ export default defineConfig({
   dts: false,
   deps: {
     alwaysBundle: [/.*/u],
+    // A native module, shipped next to the bundle.
+    neverBundle: ["@napi-rs/keyring"],
   },
 });

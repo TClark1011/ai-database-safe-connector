@@ -46,6 +46,10 @@ _Avoid_: Read-only user, AI user
 The developer's privileged database credentials, used only to run Sync and never on the query path.
 _Avoid_: Root credentials, master credentials
 
+**Keychain Entry**:
+A secret in the developer's OS keychain, tied to one database server: either the Admin Credentials for that server, or an Agent User's password and its last-synced settings. It never names an Environment, so editing the Project Config can't point it at another server.
+_Avoid_: Entry, credential record, secret
+
 **Safe Schema**:
 The database schema of views, generated from the Column Allowlist, that is all the Agent User can see in a restricted Environment. Each Agent User has its own.
 _Avoid_: View schema, shadow schema

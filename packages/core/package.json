@@ -10,5 +10,10 @@
   },
   "scripts": {
     "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@napi-rs/keyring": "^2.1.2",
+    "csv-stringify": "^6.9.0",
+    "zod": "^4.6.7"
   }
 }
