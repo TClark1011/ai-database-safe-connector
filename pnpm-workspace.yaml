@@ -7,3 +7,12 @@ allowBuilds:
   lefthook: true
   protobufjs: false
   ssh2: false
+# The semantic-release plugins resolve their preset from their own location first, where pnpm
+# hoists commitlint's preset. Its v10 needs conventional-changelog-writer@9, which they lack.
+packageExtensions:
+  "@semantic-release/commit-analyzer":
+    dependencies:
+      conventional-changelog-conventionalcommits: ^9.3.1
+  "@semantic-release/release-notes-generator":
+    dependencies:
+      conventional-changelog-conventionalcommits: ^9.3.1
