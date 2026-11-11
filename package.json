@@ -6,6 +6,7 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "generate:schema": "pnpm --filter @ai-database-safety-experiment/core run generate:schema",
     "typecheck": "turbo run typecheck && tsc",
     "test": "turbo run build && vitest run",
     "test:process": "vitest run --project process",

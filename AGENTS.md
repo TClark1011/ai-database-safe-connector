@@ -10,18 +10,18 @@ Lets an AI agent working in a project's codebase read from that project's databa
 - _Monorepo tasks:_ Turborepo
 - _Bundler:_ tsdown, bundling each runnable entry and its dependencies into one `.mjs` file
 - _MCP:_ MCP TypeScript SDK v2 (`@modelcontextprotocol/server`, `@modelcontextprotocol/client` in tests), stdio via `serveStdio`
-- _Validation:_ zod 4, validating the Project Config, and generating its JSON Schema (planned)
+- _Validation:_ zod 4, validating the Project Config, and generating its JSON Schema (`pnpm generate:schema`, committed by CI on pull requests)
 - _MySQL driver:_ `mysql2`
 - _Keychain:_ `@napi-rs/keyring`, kept outside the bundles since it is a native module
 - _Setup CLI:_ `citty` and `@clack/prompts` (planned)
 - _CSV:_ `csv-stringify`
-- _Project Config format:_ JSON with a published `$schema` (planned)
+- _Project Config format:_ JSON with a `$schema` published as a GitHub Release asset
 - _Distribution:_ GitHub Releases, one zip per OS, extracted to `~/.claude/ai-database-safety-experiment/`, with the `@napi-rs/keyring` native module shipped beside the bundles (planned)
 - _Claude Code plugin:_ marketplace in this repo, plugin config only, running the installed bundles (`userConfig.install_dir`)
 - _Skill library:_ harness-agnostic package bundled into Harness Plugins (planned)
 - _Other database engines:_ more Database Adapters, e.g. PostgreSQL (planned)
 - _Other harnesses:_ more Harness Plugins under `plugins/` (planned)
-- _Testing:_ Vitest, with Testcontainers running a real MySQL in Docker
+- _Testing:_ Vitest, with Testcontainers running a real MySQL in Docker; ajv checks the generated JSON Schema
 - _CI:_ GitHub Actions
 - _Commit messages:_ commitlint (Lefthook `commit-msg` hook), commitizen as `pnpm commit`
 - _Releases:_ semantic-release on every push to `main` that touches shipped code, versioned from Conventional Commits; the Claude Code plugin has no `version`, so it tracks commits

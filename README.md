@@ -20,6 +20,20 @@ pnpm typecheck   # type-check every package
 
 Run a single package with a filter, e.g. `pnpm --filter @ai-database-safety-experiment/mcp dev`.
 
+`pnpm generate:schema` regenerates `packages/core/project-config.schema.json` from the Project Config's zod schema. CI regenerates and commits it on pull requests.
+
+## Project Config
+
+Each project has an `ai-db-safety.json` at its root. Point its `$schema` at the published JSON Schema for editor validation and completion:
+
+```json
+{
+  "$schema": "https://github.com/TClark1011/ai-database-safe-connector/releases/latest/download/project-config.schema.json"
+}
+```
+
+The JSON Schema can't check that each `unrestrictedEnvironments` entry names a defined Environment; the MCP server still refuses a config that breaks that rule.
+
 ## Packages
 
 | Path                     | What it is                                              |

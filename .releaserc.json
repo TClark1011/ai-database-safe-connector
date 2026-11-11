@@ -10,7 +10,8 @@
         "assets": [
           { "path": "release/ai-database-safety-experiment-linux-x64.zip" },
           { "path": "release/ai-database-safety-experiment-darwin-arm64.zip" },
-          { "path": "release/ai-database-safety-experiment-win32-x64.zip" }
+          { "path": "release/ai-database-safety-experiment-win32-x64.zip" },
+          { "path": "packages/core/project-config.schema.json" }
         ],
         "successComment": false,
         "releasedLabels": false

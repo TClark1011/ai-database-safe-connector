@@ -47,7 +47,8 @@ function checkUnrestrictedEnvironments(
   }
 }
 
-const projectConfigSchema = z
+// JSON Schema drops refinements, so `.meta()` mirrors each one that JSON Schema can express.
+export const projectConfigSchema = z
   .strictObject({
     $schema: z.string().optional(),
     environments: z
@@ -55,8 +56,9 @@ const projectConfigSchema = z
       .refine(
         (environments: Readonly<Record<string, unknown>>) => Object.keys(environments).length > 0,
         { message: "Define at least one Environment" },
-      ),
-    unrestrictedEnvironments: z.array(z.string()).default([]),
+      )
+      .meta({ minProperties: 1 }),
+    unrestrictedEnvironments: z.array(z.string()).meta({ uniqueItems: true }).default([]),
     columnAllowlist: z.record(
       z.string(),
       z.record(z.string(), z.enum(["full", "obfuscated", "hidden"])),
