@@ -11,8 +11,64 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  generate-schema:
+    name: Generate schema
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: pnpm/setup@v3
+        with:
+          cache: true
+          require-lockfile: true
+      - run: pnpm generate:schema
+      - uses: actions/upload-artifact@v7
+        with:
+          name: project-config-schema
+          path: packages/core/project-config.schema.json
+          if-no-files-found: error
+
+  # Holds the write token, so it runs no code from the branch: no pnpm install, no scripts.
+  commit-schema:
+    name: Commit schema
+    needs: generate-schema
+    # Pushing to a fork's branch isn't possible; there the drift test fails instead.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.commit.outputs.sha }}
+    steps:
+      # The commit the schema was generated from; the push fails if the branch has moved since.
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/download-artifact@v8
+        with:
+          name: project-config-schema
+          path: packages/core
+      - id: commit
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          schema=packages/core/project-config.schema.json
+          if [ -z "$(git status --porcelain -- "$schema")" ]; then
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "$schema"
+          git commit --message "chore(core): regenerate Project Config JSON Schema"
+          git push origin "HEAD:refs/heads/$HEAD_REF"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   check:
     name: ${{ matrix.name }}
+    needs: [generate-schema, commit-schema]
+    # Runs when commit-schema is skipped on a fork, and even when schema generation fails.
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     strategy:
       # Let every check finish, so one failure never hides another.
@@ -33,7 +89,10 @@ jobs:
           - name: Test (flow)
             script: test:flow
     steps:
+      # Checks the regenerated schema commit when commit-schema pushed one.
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.commit-schema.outputs.sha }}
       # Installs pnpm from packageManager and Node.js from .nvmrc, then runs pnpm install.
       - uses: pnpm/setup@v3
         with:

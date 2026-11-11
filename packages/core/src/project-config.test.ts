@@ -3,6 +3,12 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { loadProjectConfig } from "#/project-config";
+import {
+  fullProjectConfig,
+  invalidProjectConfigs,
+  validProjectConfigs,
+  zodOnlyInvalidProjectConfigs,
+} from "#/project-config.fixtures";
 
 async function projectDirWith(content?: string): Promise<string> {
   const dir = await mkdtemp(path.join(tmpdir(), "project-config-"));
@@ -22,17 +28,7 @@ async function loadingError(content?: string): Promise<unknown> {
 
 describe("loadProjectConfig", () => {
   it("loads Environments with defaults filled in", async () => {
-    const dir = await projectDirWith(
-      JSON.stringify({
-        $schema: "https://example.com/schema.json",
-        environments: {
-          prod: { host: "db.example.com", database: "app", tlsCaPath: "./certs/rds.pem" },
-          "dev-2": { host: "127.0.0.1", port: 3307, database: "app_dev", tls: "off" },
-        },
-        unrestrictedEnvironments: ["dev-2"],
-        columnAllowlist: { users: { id: "obfuscated" } },
-      }),
-    );
+    const dir = await projectDirWith(JSON.stringify(fullProjectConfig));
 
     await expect(loadProjectConfig(dir)).resolves.toEqual({
       environments: {
@@ -51,58 +47,28 @@ describe("loadProjectConfig", () => {
     });
   });
 
+  it.each(validProjectConfigs)("loads a config with $name", async ({ config }) => {
+    const dir = await projectDirWith(JSON.stringify(config));
+
+    await expect(loadProjectConfig(dir)).resolves.toBeDefined();
+  });
+
   it("refuses a missing config with CONFIG_MISSING", async () => {
     await expect(loadingError()).resolves.toMatchObject({ code: "CONFIG_MISSING" });
   });
 });
 
 describe("loadProjectConfig with an invalid config", () => {
-  it.each([
-    ["malformed JSON", "{"],
-    [
-      "an unknown key",
-      JSON.stringify({
-        environments: { dev: { host: "h", database: "d" } },
-        columnAllowlist: {},
-        extra: 1,
-      }),
-    ],
-    ["no Environments", JSON.stringify({ environments: {}, columnAllowlist: {} })],
-    [
-      "an Environment name over 17 characters",
-      JSON.stringify({
-        environments: { abcdefghijklmnopqr: { host: "h", database: "d" } },
-        columnAllowlist: {},
-      }),
-    ],
-    [
-      "an Environment name with uppercase letters",
-      JSON.stringify({ environments: { Dev: { host: "h", database: "d" } }, columnAllowlist: {} }),
-    ],
-    [
-      "an unknown unrestricted Environment",
-      JSON.stringify({
-        environments: { dev: { host: "h", database: "d" } },
-        unrestrictedEnvironments: ["prod"],
-        columnAllowlist: {},
-      }),
-    ],
-    [
-      "a duplicate unrestricted Environment",
-      JSON.stringify({
-        environments: { dev: { host: "h", database: "d" } },
-        unrestrictedEnvironments: ["dev", "dev"],
-        columnAllowlist: {},
-      }),
-    ],
-    [
-      "an unknown tls mode",
-      JSON.stringify({
-        environments: { dev: { host: "h", database: "d", tls: "maybe" } },
-        columnAllowlist: {},
-      }),
-    ],
-  ])("refuses %s with CONFIG_INVALID", async (_case, content) => {
-    await expect(loadingError(content)).resolves.toMatchObject({ code: "CONFIG_INVALID" });
+  it("refuses malformed JSON with CONFIG_INVALID", async () => {
+    await expect(loadingError("{")).resolves.toMatchObject({ code: "CONFIG_INVALID" });
   });
+
+  it.each([...invalidProjectConfigs, ...zodOnlyInvalidProjectConfigs])(
+    "refuses $name with CONFIG_INVALID",
+    async ({ config }) => {
+      await expect(loadingError(JSON.stringify(config))).resolves.toMatchObject({
+        code: "CONFIG_INVALID",
+      });
+    },
+  );
 });
