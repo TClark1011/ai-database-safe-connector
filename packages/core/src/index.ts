@@ -9,6 +9,12 @@ export {
   readAgentCredentials,
   writeAgentCredentials,
 } from "#/credential-store";
+export {
+  type CappedCsv,
+  type CappedCsvResult,
+  type ResultCaps,
+  createCappedCsv,
+} from "#/capped-csv";
 export { type CsvValue, formatCsv } from "#/csv";
 export type {
   AdminSession,
@@ -17,7 +23,9 @@ export type {
   AppliedState,
   ConnectionSettings,
   DatabaseAdapter,
-  QueryResult,
+  QueryRequest,
+  RawRow,
+  RowSink,
   ServerAddress,
   ServerSettings,
 } from "#/database-adapter";
@@ -31,6 +39,7 @@ export {
   loadProjectConfig,
   projectConfigFileName,
 } from "#/project-config";
+export { formatCount, queryLimits } from "#/query-limits";
 export {
   type Approval,
   type SyncOutcome,

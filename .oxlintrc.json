@@ -27,6 +27,7 @@
         "treatMethodsAsReadonly": true,
         "allow": [
           { "from": "package", "package": "vitest", "name": ["TestProject"] },
+          { "from": "package", "package": "@types/node", "name": ["Buffer"] },
           {
             "from": "package",
             "package": "mysql2",

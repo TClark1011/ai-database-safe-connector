@@ -1,30 +1,15 @@
 import {
   AppError,
   type ConnectionSettings,
-  type CsvValue,
-  type QueryResult,
+  type QueryRequest,
   errorMessage,
 } from "@ai-database-safety-experiment/core";
-import type { FieldPacket, RowDataPacket, TypeCast } from "mysql2/promise";
-import { closeQuietly, openConnection } from "#/connection";
+import type { Connection } from "mysql2";
+import { closeQuietly, openStreamingConnection } from "#/connection";
+import { streamRows } from "#/stream-rows";
+import { killQuery, startWatchdog } from "#/watchdog";
 
-const asText: TypeCast = (field) => field.string();
-
-function toCsvValue(value: unknown): CsvValue {
-  if (value === null || typeof value === "string") {
-    return value;
-  }
-  throw new Error(`Expected a text value from the driver, got ${typeof value}`);
-}
-
-function toCsvRows(rows: readonly unknown[]): CsvValue[][] {
-  return rows.map((row) => {
-    if (!Array.isArray(row)) {
-      throw new TypeError("Expected each row as an array");
-    }
-    return (row as readonly unknown[]).map((value) => toCsvValue(value));
-  });
-}
+const queryTimeoutErrno = 3024;
 
 function queryFailed(error: unknown): AppError {
   return new AppError("QUERY_FAILED", errorMessage(error), "Fix the SQL, then query again.", {
@@ -32,41 +17,73 @@ function queryFailed(error: unknown): AppError {
   });
 }
 
+function queryTimedOut(timeLimitSeconds: number, error: unknown): AppError {
+  return new AppError(
+    "QUERY_TIMED_OUT",
+    `The query ran past the ${timeLimitSeconds} second limit and was stopped.`,
+    "Narrow the query, e.g. with a LIMIT or conditions on indexed columns, then query again.",
+    { cause: error },
+  );
+}
+
+function isServerTimeout(error: unknown): boolean {
+  return error instanceof Error && "errno" in error && error.errno === queryTimeoutErrno;
+}
+
+/** Opens a fresh connection in UTC, with the time limit, inside a read-only transaction. */
+async function openQueryConnection(
+  settings: ConnectionSettings,
+  timeLimitMs: number,
+): Promise<Connection> {
+  const connection = openStreamingConnection(settings);
+  const statements = connection.promise();
+  try {
+    await statements.query("SET time_zone = '+00:00'");
+    await statements.query("SET max_execution_time = ?", [timeLimitMs]);
+    await statements.query("START TRANSACTION READ ONLY");
+  } catch (error) {
+    await closeQuietly(statements);
+    throw error;
+  }
+  return connection;
+}
+
 /**
- * Runs one statement on a fresh connection, in UTC and inside a read-only transaction, and
- * returns every value in MySQL's text form.
+ * Runs one statement on a fresh connection and streams every value in MySQL's text form, with
+ * binary as `0x` hex and JSON compacted, into the sink (ADR 0014).
  */
 export async function runReadOnlyQuery(
   settings: ConnectionSettings,
-  sql: string,
-): Promise<QueryResult> {
+  { sql, timeLimitSeconds, sink }: QueryRequest,
+): Promise<void> {
+  const timeLimitMs = timeLimitSeconds * 1000;
   let connection;
   try {
-    connection = await openConnection(settings);
+    connection = await openQueryConnection(settings, timeLimitMs);
   } catch (error) {
     throw queryFailed(error);
   }
 
-  let rows: RowDataPacket[][];
-  let fields: FieldPacket[] | undefined;
+  const { threadId } = connection;
+  const kill = () => killQuery(settings, threadId);
+  const stream = streamRows(connection, sql, sink);
+  // Started only now, so connecting doesn't count toward the limit.
+  const watchdog = startWatchdog(timeLimitMs, kill, stream.abort);
   try {
-    await connection.query("SET time_zone = '+00:00'");
-    await connection.query("START TRANSACTION READ ONLY");
-    [rows, fields] = await connection.query<RowDataPacket[][]>({
-      sql,
-      rowsAsArray: true,
-      typeCast: asText,
-    });
+    const end = await stream.ended;
+    if (end === "declined") {
+      // Stops the server sending the rest; dropping the connection is the fallback.
+      await kill().catch(() => {
+        connection.destroy();
+      });
+    }
   } catch (error) {
-    throw queryFailed(error);
+    throw watchdog.fired() || isServerTimeout(error)
+      ? queryTimedOut(timeLimitSeconds, error)
+      : queryFailed(error);
   } finally {
+    watchdog.stop();
     // Closing ends the transaction without committing it.
-    await closeQuietly(connection);
+    await closeQuietly(connection.promise());
   }
-
-  // Statements without a result set, such as SET, have no fields.
-  if (!Array.isArray(fields)) {
-    return { columns: [], rows: [] };
-  }
-  return { columns: fields.map((field) => field.name), rows: toCsvRows(rows) };
 }

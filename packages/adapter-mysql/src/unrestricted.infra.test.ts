@@ -4,6 +4,7 @@ import mysql, { type RowDataPacket } from "mysql2/promise";
 import { expect, it, onTestFinished } from "vitest";
 import { openConnection } from "#/connection";
 import { mysqlAdapter } from "#/index";
+import { queryRows } from "#/query-rows.test-support";
 
 const password = "agent-password-1";
 
@@ -68,9 +69,7 @@ it("grants the Agent User exactly SELECT on the database", async () => {
 it("lets the Agent User read the database but not write to it", async () => {
   const { agent } = await setUpGranted();
 
-  await expect(
-    mysqlAdapter.runReadOnlyQuery(agent, "SELECT id, note FROM items ORDER BY id"),
-  ).resolves.toEqual({
+  await expect(queryRows(agent, "SELECT id, note FROM items ORDER BY id")).resolves.toEqual({
     columns: ["id", "note"],
     rows: [
       ["1", "one"],
@@ -95,7 +94,7 @@ it("doesn't treat underscores in the database name as wildcards", async () => {
   await seedDatabase(test.admin, lookalike);
 
   await expect(
-    mysqlAdapter.runReadOnlyQuery(agent, `SELECT id FROM ${mysql.escapeId(lookalike)}.items`),
+    queryRows(agent, `SELECT id FROM ${mysql.escapeId(lookalike)}.items`),
   ).rejects.toMatchObject({ code: "QUERY_FAILED" });
 });
 
@@ -138,7 +137,7 @@ it("runs every query in a read-only transaction", async () => {
     agentUser,
   ]);
 
-  const insert = mysqlAdapter.runReadOnlyQuery(agent, "INSERT INTO items VALUES (3, 'three')");
+  const insert = queryRows(agent, "INSERT INTO items VALUES (3, 'three')");
 
   await expect(insert).rejects.toMatchObject({ code: "QUERY_FAILED" });
   await expect(insert).rejects.toThrow(/READ ONLY transaction/u);
@@ -147,7 +146,7 @@ it("runs every query in a read-only transaction", async () => {
 it("refuses more than one statement per query", async () => {
   const { agent } = await setUpGranted();
 
-  await expect(mysqlAdapter.runReadOnlyQuery(agent, "SELECT 1; SELECT 2")).rejects.toMatchObject({
+  await expect(queryRows(agent, "SELECT 1; SELECT 2")).rejects.toMatchObject({
     code: "QUERY_FAILED",
   });
 });
@@ -179,9 +178,7 @@ it("tells the server the client never sends local files", async () => {
 it("runs queries in UTC", async () => {
   const { agent } = await setUpGranted();
 
-  await expect(
-    mysqlAdapter.runReadOnlyQuery(agent, "SELECT @@session.time_zone AS tz"),
-  ).resolves.toEqual({
+  await expect(queryRows(agent, "SELECT @@session.time_zone AS tz")).resolves.toEqual({
     columns: ["tz"],
     rows: [["+00:00"]],
   });

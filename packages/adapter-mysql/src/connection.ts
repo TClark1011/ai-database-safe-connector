@@ -1,4 +1,8 @@
 import type { ConnectionSettings } from "@ai-database-safety-experiment/core";
+import {
+  type Connection as StreamingConnection,
+  createConnection as createCallbackConnection,
+} from "mysql2";
 import mysql, { type Connection, type ConnectionOptions } from "mysql2/promise";
 
 function sslOptions(settings: ConnectionSettings): Pick<ConnectionOptions, "ssl"> {
@@ -16,11 +20,11 @@ function sslOptions(settings: ConnectionSettings): Pick<ConnectionOptions, "ssl"
 }
 
 /**
- * Opens a connection that allows only one statement per query and tells the server the client
- * never sends local files, so `LOAD DATA LOCAL` can't make it read one.
+ * Allows only one statement per query and tells the server the client never sends local files,
+ * so `LOAD DATA LOCAL` can't make it read one.
  */
-export function openConnection(settings: ConnectionSettings): Promise<Connection> {
-  return mysql.createConnection({
+function connectionOptions(settings: ConnectionSettings): ConnectionOptions {
+  return {
     host: settings.host,
     port: settings.port,
     user: settings.user,
@@ -29,7 +33,19 @@ export function openConnection(settings: ConnectionSettings): Promise<Connection
     flags: ["-LOCAL_FILES"],
     ...sslOptions(settings),
     ...(settings.database === undefined ? {} : { database: settings.database }),
-  });
+  };
+}
+
+export function openConnection(settings: ConnectionSettings): Promise<Connection> {
+  return mysql.createConnection(connectionOptions(settings));
+}
+
+/**
+ * Opens a callback-style connection, whose queries can stream rows. It connects on its first
+ * statement, so connection errors surface there.
+ */
+export function openStreamingConnection(settings: ConnectionSettings): StreamingConnection {
+  return createCallbackConnection(connectionOptions(settings));
 }
 
 /** Closes a connection, ignoring errors: there is nothing left to do with it either way. */

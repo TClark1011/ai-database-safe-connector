@@ -15,7 +15,7 @@ Next step: next step
 
 Rules:
 
-- Throw `AppError` wherever the cause is known. Wrap library errors at the boundary that knows what failed (Sync wraps them as `SYNC_FAILED`, query execution as `QUERY_FAILED`, the keychain as `KEYCHAIN_UNAVAILABLE`), keeping the original as `cause`. Use `errorMessage` for the wrapped error's text.
+- Throw `AppError` wherever the cause is known. Wrap library errors at the boundary that knows what failed (Sync wraps them as `SYNC_FAILED`, query execution as `QUERY_FAILED`, or `QUERY_TIMED_OUT` when it ran past the time limit, the keychain as `KEYCHAIN_UNAVAILABLE`), keeping the original as `cause`. Use `errorMessage` for the wrapped error's text.
 - Keep the Admin username out of messages the agent sees; Sync replaces it with `<redacted>`.
 - Anything else renders as `[UNEXPECTED]`, which is a bug.
 - In the MCP, a failure is a tool error (`isError: true`) whose first text block is `formatError`'s output, followed by a notes block when there are notes. It never includes CSV.

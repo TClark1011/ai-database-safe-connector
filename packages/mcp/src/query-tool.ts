@@ -6,14 +6,17 @@ import {
   type AgentTarget,
   AppError,
   type Approval,
+  type CappedCsvResult,
   type CredentialStore,
   type EnvironmentConfig,
   type ServerSettings,
   agentUserName,
-  formatCsv,
+  createCappedCsv,
+  formatCount,
   formatError,
   loadProjectConfig,
   projectConfigFileName,
+  queryLimits,
   readAdminCredentials,
   readAgentCredentials,
   readGlobalGitEmail,
@@ -151,7 +154,7 @@ async function queryAsAgent(
   environment: string,
   { server, target }: QueryTarget,
   sql: string,
-): Promise<string> {
+): Promise<CappedCsvResult> {
   const agent = await readAgentCredentials(credentialStore, server, target.agentUser);
   if (agent === null) {
     throw new AppError(
@@ -160,11 +163,12 @@ async function queryAsAgent(
       "Query again and ask the human to approve the widening.",
     );
   }
-  const result = await mysqlAdapter.runReadOnlyQuery(
+  const csv = createCappedCsv();
+  await mysqlAdapter.runReadOnlyQuery(
     { ...server, user: target.agentUser, password: agent.password, database: target.database },
-    sql,
+    { sql, timeLimitSeconds: queryLimits.timeLimitSeconds, sink: csv },
   );
-  return formatCsv(result.columns, result.rows);
+  return csv.result();
 }
 
 async function runQuery(
@@ -194,8 +198,13 @@ async function runQuery(
   }
 
   try {
-    const csv = await queryAsAgent(options.credentialStore, args.environment, resolved, args.sql);
-    return successResult(csv, sync.notes);
+    const { csv, notes } = await queryAsAgent(
+      options.credentialStore,
+      args.environment,
+      resolved,
+      args.sql,
+    );
+    return successResult(csv, [...sync.notes, ...notes]);
   } catch (error) {
     return errorResult(error, sync.notes);
   }
@@ -209,7 +218,10 @@ export function registerQueryTool(server: McpServer, options: QueryToolOptions):
       title: "Query the database",
       description:
         `Run one read-only SQL statement against an Environment from ${projectConfigFileName} ` +
-        "and get the rows back as CSV. An unquoted empty field is NULL.",
+        "and get the rows back as CSV. An unquoted empty field is NULL. Results stop at " +
+        `${formatCount(queryLimits.maxRows)} rows or ` +
+        `${formatCount(queryLimits.maxCharacters)} characters, and queries at ` +
+        `${queryLimits.timeLimitSeconds} seconds.`,
       inputSchema,
     },
     async (args: QueryArgs, ctx: ServerContext) => {

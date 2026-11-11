@@ -33,9 +33,28 @@ export interface AppliedState {
   readonly access: AppliedAccess;
 }
 
-export interface QueryResult {
-  readonly columns: readonly string[];
-  readonly rows: readonly (readonly CsvValue[])[];
+/** One row as read from the server: its raw size, and its values in text form on demand. */
+export interface RawRow {
+  /** Total bytes of the row's values as the server sent them. */
+  readonly rawBytes: number;
+  decode(): readonly CsvValue[];
+}
+
+/** Receives a query's result as it streams in. */
+export interface RowSink {
+  /** Called once, before any row, when the statement returns a result set. */
+  columns(names: readonly string[]): void;
+  /** Takes one row. Returns false when the row is dropped because the result is full: stop reading. */
+  row(row: RawRow): boolean;
+}
+
+export interface QueryRequest {
+  /** One SQL statement. */
+  readonly sql: string;
+  /** Server-side time limit, enforced by a watchdog even when the SQL overrides it. */
+  readonly timeLimitSeconds: number;
+  /** Receives the result as it streams in; reading stops when it declines a row. */
+  readonly sink: RowSink;
 }
 
 /** Sync's statements, run on one Admin connection. */
@@ -53,6 +72,9 @@ export interface AdminSession {
 /** The engine-specific half of Sync and query execution (one per database engine). */
 export interface DatabaseAdapter {
   openAdminSession(settings: ConnectionSettings): Promise<AdminSession>;
-  /** Runs one statement as the Agent User, failing with `QUERY_FAILED`. */
-  runReadOnlyQuery(settings: ConnectionSettings, sql: string): Promise<QueryResult>;
+  /**
+   * Runs one statement as the Agent User, giving every value in its text form, failing with
+   * `QUERY_FAILED` or `QUERY_TIMED_OUT`.
+   */
+  runReadOnlyQuery(settings: ConnectionSettings, request: QueryRequest): Promise<void>;
 }
