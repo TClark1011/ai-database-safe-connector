@@ -8,7 +8,8 @@ export type ErrorCode =
   | "KEYCHAIN_UNAVAILABLE"
   | "SYNC_FAILED"
   | "NO_AGENT_ACCESS"
-  | "QUERY_FAILED";
+  | "QUERY_FAILED"
+  | "QUERY_TIMED_OUT";
 
 /**
  * A failure shown to a human or the agent: a stable `code` that never changes meaning, the cause
